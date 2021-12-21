@@ -1,26 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-</head>
-<body>
-<div id="app">
-  <h1>{{ message }}</h1>
-</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet"> 
+		<title>Feedback</title>
+	</head>
+	<body>
+		<div id="app">
+      <v-app>
+        <v-main>
+          <v-container>
+            <h1 class="text-title">Have some feedback for AC Wildlife?</h1>
+            <div class="d-flex flex-row align-center justify-center">
+              <v-form v-on:submit="addNewSuggestion()">
+                <v-text-field
+                label="It'd be cool if..."
+                v-model="newItemText"
+                hide-details="auto"
+                class="mr-8"
+                ></v-text-field>
+              </v-form>
+              <v-btn class="success" v-on:click="addNewSuggestion()">
+                Suggest!
+              </v-btn> 
+            </div>
+           <v-list class="mt-8" three-line>
+              <v-list-item
+              v-for="item in sortedSuggestions"
+              class="item mb-5 pt-2 pb-8 px-4"
+              >
+              <div class="item-content d-flex justify-space-between">
+                <p class="item-text">
+                  {{item.text}}
+                </p>
+                <v-btn v-if="!item.upvoted" v-on:click="handleVoteClick(item)" class="align-self-center d-flex justify-center">
+                  <p class="ma-0">{{item.upvotes}}</p>
+                  <v-icon
+                >
+                  mdi-arrow-up-bold
+                </v-icon>
+                </v-btn>
+                <v-btn v-else v-on:click="handleVoteClick(item)" class="upvoted align-self-center d-flex justify-center">
+                  <p class="ma-0">{{item.upvotes}}</p>
+                  <v-icon
+                >
+                  mdi-arrow-up-bold
+                </v-icon>
+                </v-btn>
+              </div>
+              </v-list-item>
+              <v-btn class="clear error" v-on:click="clearList()">Clear List</v-btn>
+            <v-container>
+        </v-main>
+      </v-app>
+		</div>
+	</body>
 
-<script>
-var myObject = new Vue({
-  el: '#app',
-  data: {message: 'Hello Vue!'}
-})
-</script>
-
-</body>
+	<script>
+    if(JSON.parse(localStorage.getItem("feedback__suggestions")) === null){
+      localStorage.setItem("feedback__suggestions", JSON.stringify([]));
+    }
+    const storedSuggestions = JSON.parse(localStorage.getItem("feedback__suggestions"));
+		var myObject = new Vue({
+			el: '#app',
+      vuetify: new Vuetify(),
+			data: { suggestions: storedSuggestions, newItemText: null },
+      computed: {
+        sortedSuggestions: function() {
+      return this.suggestions.sort((a, b) => a.dateAdded - b.dateAdded)
+      },
+      },
+      methods: {
+        addNewSuggestion: function() {
+          if(this.newItemText === null){
+            return;
+          }
+          let id = 0;
+          if(this.suggestions.length > 0){
+            id = Math.max(...this.suggestions.map(s => s.id)) + 1;
+          }
+          const newItem = {
+            id,
+            dateAdded: new Date(),
+            text: this.newItemText,
+            upvotes: Math.floor(Math.random() * 10),
+            upvoted: false
+          }
+          this.suggestions = [newItem, ...this.suggestions]
+          localStorage.setItem("feedback__suggestions", JSON.stringify(this.suggestions));
+          this.newItemText = null;
+        },
+        handleVoteClick: function(item) {      
+          this.suggestions.find(s => s.id === item.id).upvoted = !item.upvoted;
+          item.upvotes = item.upvoted ? item.upvotes + 1 : item.upvotes - 1;
+        },
+        clearList: function() {
+          localStorage.setItem("feedback__suggestions", JSON.stringify([]));
+          this.suggestions = [];
+        }
+      },
+		});
+	</script>
 </html>
-
-</body>
-</html>
+<style>
+  .container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .text-title {
+    text-align: center;
+  }
+  .item {
+    width: 95vw;
+    max-width: 40rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(202, 202, 202);
+    height: 6rem;
+  }
+  .item-text {
+    overflow: scroll;
+    font-family: 'Baloo 2', cursive;
+    
+  }
+  .item-content {
+    width: 100%;
+    height: 100%;
+  }
+  .v-btn.upvoted {
+    background-color: rgb(255, 196, 86) !important;
+  }
+  .clear {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+  }
+</style>
