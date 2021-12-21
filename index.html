@@ -103,6 +103,7 @@
         handleVoteClick: function(item) {      
           this.suggestions.find(s => s.id === item.id).upvoted = !item.upvoted;
           item.upvotes = item.upvoted ? item.upvotes + 1 : item.upvotes - 1;
+          localStorage.setItem("feedback__suggestions", JSON.stringify(this.suggestions));
         },
         clearList: function() {
           localStorage.setItem("feedback__suggestions", JSON.stringify([]));
