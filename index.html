@@ -37,7 +37,7 @@
            <v-list class="mt-8" three-line>
               <v-list-item
               v-for="item in sortedSuggestions"
-              class="item mb-5 pt-2 pb-8 px-4"
+              class="item mb-5 py-2 px-4"
               >
               <div class="item-content d-flex justify-space-between">
                 <p class="item-text">
@@ -132,9 +132,14 @@
     height: 6rem;
   }
   .item-text {
-    overflow: scroll;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    height: 100%;
     font-family: 'Baloo 2', cursive;
-    
   }
   .item-content {
     width: 100%;
