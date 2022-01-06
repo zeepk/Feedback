@@ -12,15 +12,15 @@
   <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
 		<title>Feedback</title>
 	</head>
 	<body>
-		<div id="app">
+		left<div id="app">
       <v-app>
         <v-main>
           <v-container>
-            <h1 class="text-title">Have some feedback for AC Wildlife?</h1>
+            <h1 class="text-title">Have some feedback for (project name)?</h1>
             <div class="d-flex flex-row align-center justify-center">
               <v-form v-on:submit="addNewSuggestion()">
                 <v-text-field
@@ -32,7 +32,7 @@
               </v-form>
               <v-btn class="success" v-on:click="addNewSuggestion()">
                 Suggest!
-              </v-btn> 
+              </v-btn>
             </div>
            <v-list class="mt-8" three-line>
               <v-list-item
@@ -60,6 +60,7 @@
               </div>
               </v-list-item>
               <v-btn class="clear error" v-on:click="clearList()">Clear List</v-btn>
+              <a href="https://github.com/zeepk/Feedback" class="github">Github Source</a>
             <v-container>
         </v-main>
       </v-app>
@@ -100,7 +101,7 @@
           localStorage.setItem("feedback__suggestions", JSON.stringify(this.suggestions));
           this.newItemText = null;
         },
-        handleVoteClick: function(item) {      
+        handleVoteClick: function(item) {
           this.suggestions.find(s => s.id === item.id).upvoted = !item.upvoted;
           item.upvotes = item.upvoted ? item.upvotes + 1 : item.upvotes - 1;
           localStorage.setItem("feedback__suggestions", JSON.stringify(this.suggestions));
@@ -152,5 +153,10 @@
     position: absolute;
     bottom: 1rem;
     right: 1rem;
+  }
+  .github {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
   }
 </style>
